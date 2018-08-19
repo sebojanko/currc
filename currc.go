@@ -4,9 +4,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"encoding/json"
-	"fmt"
 	"flag"
 	"strconv"
+	"fmt"
 )
 
 var help bool
@@ -20,7 +20,7 @@ var flagToCurrency = map[string]string{
 	"td": "HRK_USD",
 	"te": "HRK_EUR"}
 
-// TODO export flags to txt file so that adding more is easier
+// TODO export flags to file so that adding new flags is easier
 // TODO working with non-compact API
 func init() {
 	flag.Bool("h", false, "lists all commands")
@@ -39,21 +39,21 @@ func main() {
 	}
 
 	flag.Visit(func(f *flag.Flag) {
-		convertCurrency(f.Name, f.Value)
+		fmt.Println(convertCurrency(f.Name, f.Value.String()))
 	})
 }
 
-func convertCurrency(name string, value flag.Value) {
+func convertCurrency(name string, value string) (float64) {
 	currenciesToConvert := flagToCurrency[name]
 
 	data, err := retrieveRates(currenciesToConvert)
 
-	amount, err := strconv.ParseFloat(value.String(), 64)
+	amount, err := strconv.ParseFloat(value, 64)
 	if err != nil {
 		panic(err)
 	}
 	multiplier := data[currenciesToConvert]["val"]
-	fmt.Println(multiplier * amount)
+	return multiplier * amount
 
 }
 func retrieveRates(currenciesToConvert string) (map[string]map[string]float64, error) {
