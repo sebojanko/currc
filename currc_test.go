@@ -1,8 +1,8 @@
 package main
 
 import (
-	"testing"
 	"strconv"
+	"testing"
 )
 
 var currency string = "USD_HRK"
@@ -44,13 +44,12 @@ func TestConvertCurrency(t *testing.T) {
 	}
 	calculatedAmount := amountFloat * data[currency]["val"]
 
-
 	convertedAmount := convertCurrency(flag_t, amount)
 	if convertedAmount == 0 {
 		t.Error("Converted amount is zero.")
 	}
 
-	if convertedAmount !=  calculatedAmount {
+	if convertedAmount != calculatedAmount {
 		t.Errorf("Converted amount is wrong, expected %f, got %f", calculatedAmount, convertedAmount)
 	}
 

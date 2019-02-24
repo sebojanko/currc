@@ -1,12 +1,13 @@
 package main
 
 import (
-	"io/ioutil"
-	"net/http"
 	"encoding/json"
 	"flag"
-	"strconv"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strconv"
 )
 
 var help bool
@@ -19,6 +20,7 @@ var flagToCurrency = map[string]string{
 	"fe": "EUR_HRK",
 	"td": "HRK_USD",
 	"te": "HRK_EUR"}
+var apiKey string
 
 // TODO export flags to file so that adding new flags is easier
 // TODO working with non-compact API
@@ -28,6 +30,7 @@ func init() {
 	flag.Float64Var(&fromEuroFlag, "fe", 0.0, "convert from `<euros>` hrk")
 	flag.Float64Var(&toDollarFlag, "td", 0.0, "convert from `<hrk>` to dollars")
 	flag.Float64Var(&toEuroFlag, "te", 0.0, "convert from `<hrk>` to euros")
+	apiKey = os.Getenv("CURRC_API_KEY")
 }
 
 func main() {
@@ -43,7 +46,7 @@ func main() {
 	})
 }
 
-func convertCurrency(name string, value string) (float64) {
+func convertCurrency(name string, value string) float64 {
 	currenciesToConvert := flagToCurrency[name]
 
 	data, err := retrieveRates(currenciesToConvert)
@@ -73,7 +76,7 @@ func unmarshalAPIRates(responseBody []byte) (map[string]map[string]float64, erro
 }
 
 func retrieveRatesFromAPI(currenciesToConvert string) []byte {
-	resp, _ := http.Get("https://free.currencyconverterapi.com/api/v5/convert?q=" + currenciesToConvert + "&compact=y")
+	resp, _ := http.Get("https://free.currencyconverterapi.com/api/v5/convert?q=" + currenciesToConvert + "&compact=y&apiKey=" + apiKey)
 	responseBody, _ := ioutil.ReadAll(resp.Body)
 	return responseBody
 }
